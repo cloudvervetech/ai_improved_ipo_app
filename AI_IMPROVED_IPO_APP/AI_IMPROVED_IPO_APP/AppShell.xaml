@@ -26,6 +26,11 @@
         ContentTemplate="{DataTemplate pages:ManageMetaPage}"
         Route="manage" />
 
+    <ShellContent
+        Title="IPO Scraping"
+        ContentTemplate="{DataTemplate pages:ScrapingDashboardPage}"
+        Route="scraping" />
+
     <Shell.FlyoutFooter>
         <Grid Padding="15">
             <sf:SfSegmentedControl x:Name="ThemeSegmentedControl" 

@@ -2,6 +2,7 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:AI_IMPROVED_IPO_APP"
+             xmlns:converters="clr-namespace:AI_IMPROVED_IPO_APP.Converters"
              x:Class="AI_IMPROVED_IPO_APP.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -10,6 +11,12 @@
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
                 <ResourceDictionary Source="Resources/Styles/AppStyles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+
+            <!-- Converters -->
+            <converters:BoolToStringConverter x:Key="BoolToStringConverter"/>
+            <converters:BoolToColorConverter x:Key="BoolToColorConverter"/>
+            <converters:PercentToDecimalConverter x:Key="PercentToDecimalConverter"/>
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

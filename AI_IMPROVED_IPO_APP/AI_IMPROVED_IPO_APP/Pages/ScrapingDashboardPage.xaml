@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:AI_IMPROVED_IPO_APP.PageModels"
+             x:Class="AI_IMPROVED_IPO_APP.Pages.ScrapingDashboardPage"
+             x:DataType="vm:ScrapingDashboardPageModel"
+             Title="IPO Scraping Dashboard">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <!-- Header -->
+            <Frame BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                   CornerRadius="10"
+                   Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="IPO Data Collection System"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           HorizontalOptions="Center"/>
+
+                    <Label Text="{Binding StatusMessage}"
+                           FontSize="16"
+                           HorizontalOptions="Center"
+                           TextColor="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource Secondary}}"/>
+
+                    <!-- Database Connection Status -->
+                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                        <Label Text="Database:"
+                               FontSize="14"
+                               VerticalOptions="Center"/>
+                        <Label Text="{Binding IsDatabaseConnected, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Connected|Not Connected'}"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{Binding IsDatabaseConnected, Converter={StaticResource BoolToColorConverter}, ConverterParameter='Green|Red'}"
+                               VerticalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Progress Section -->
+            <Frame BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                   CornerRadius="10"
+                   Padding="15"
+                   IsVisible="{Binding IsScrapingRunning}">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Scraping Progress"
+                           FontSize="20"
+                           FontAttributes="Bold"/>
+
+                    <!-- Progress Bar -->
+                    <ProgressBar Progress="{Binding ProgressPercentage, Converter={StaticResource PercentToDecimalConverter}}"
+                                 ProgressColor="{StaticResource Primary}"
+                                 HeightRequest="20"/>
+
+                    <!-- Progress Text -->
+                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                        <Label Text="{Binding CurrentItem}"
+                               FontSize="18"
+                               FontAttributes="Bold"/>
+                        <Label Text="/"
+                               FontSize="18"/>
+                        <Label Text="{Binding TotalItems}"
+                               FontSize="18"/>
+                        <Label Text="IPOs"
+                               FontSize="18"/>
+                        <Label Text="{Binding ProgressPercentage, StringFormat='({0:F1}%)'}"
+                               FontSize="14"
+                               TextColor="{StaticResource Gray600}"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Current IPO -->
+                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                        <Label Text="Current:"
+                               FontSize="14"/>
+                        <Label Text="{Binding CurrentIPOName}"
+                               FontSize="14"
+                               FontAttributes="Bold"
+                               TextColor="{StaticResource Primary}"/>
+                    </HorizontalStackLayout>
+
+                    <!-- Status Badge -->
+                    <Label Text="{Binding CurrentStatus}"
+                           FontSize="12"
+                           Padding="8,4"
+                           BackgroundColor="{StaticResource Primary}"
+                           TextColor="White"
+                           HorizontalOptions="Center"
+                           VerticalTextAlignment="Center"
+                           HorizontalTextAlignment="Center">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer/>
+                        </Label.GestureRecognizers>
+                    </Label>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Action Buttons -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Button Grid.Column="0"
+                        Text="Start Scraping"
+                        Command="{Binding StartScrapingCommand}"
+                        IsEnabled="{Binding IsScrapingRunning, Converter={StaticResource InvertedBoolConverter}}"
+                        BackgroundColor="{StaticResource Primary}"
+                        TextColor="White"
+                        CornerRadius="8"
+                        HeightRequest="50"/>
+
+                <Button Grid.Column="1"
+                        Text="Stop Scraping"
+                        Command="{Binding StopScrapingCommand}"
+                        IsEnabled="{Binding IsScrapingRunning}"
+                        BackgroundColor="{StaticResource Tertiary}"
+                        TextColor="White"
+                        CornerRadius="8"
+                        HeightRequest="50"/>
+            </Grid>
+
+            <!-- Database Management -->
+            <Frame BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                   CornerRadius="10"
+                   Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Database Management"
+                           FontSize="18"
+                           FontAttributes="Bold"/>
+
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10" RowSpacing="10">
+                        <Button Grid.Column="0"
+                                Text="Initialize DB"
+                                Command="{Binding InitializeDatabaseCommand}"
+                                BackgroundColor="{StaticResource Secondary}"
+                                TextColor="White"
+                                CornerRadius="8"/>
+
+                        <Button Grid.Column="1"
+                                Text="Test Connection"
+                                Command="{Binding TestDatabaseConnectionCommand}"
+                                BackgroundColor="{StaticResource Secondary}"
+                                TextColor="White"
+                                CornerRadius="8"/>
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- Recent Logs -->
+            <Frame BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray600}}"
+                   CornerRadius="10"
+                   Padding="15">
+                <VerticalStackLayout Spacing="10">
+                    <HorizontalStackLayout Spacing="10" HorizontalOptions="SpaceBetween">
+                        <Label Text="Recent Activity"
+                               FontSize="18"
+                               FontAttributes="Bold"/>
+                        <Button Text="Refresh"
+                                Command="{Binding ViewLogsCommand}"
+                                FontSize="12"
+                                Padding="10,5"
+                                BackgroundColor="Transparent"
+                                TextColor="{StaticResource Primary}"/>
+                    </HorizontalStackLayout>
+
+                    <CollectionView ItemsSource="{Binding RecentLogs}"
+                                    MaximumHeightRequest="300">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="vm:ScrapingLogEntry">
+                                <Frame Padding="10" Margin="0,2" BorderColor="Transparent">
+                                    <Grid ColumnDefinitions="60,*,80,80" ColumnSpacing="5">
+                                        <Label Grid.Column="0"
+                                               Text="{Binding Timestamp}"
+                                               FontSize="11"
+                                               TextColor="{StaticResource Gray600}"/>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding IPOName}"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               LineBreakMode="TailTruncation"/>
+                                        <Label Grid.Column="2"
+                                               Text="{Binding Status}"
+                                               FontSize="11"
+                                               HorizontalOptions="End"/>
+                                        <Label Grid.Column="3"
+                                               Text="{Binding Message}"
+                                               FontSize="10"
+                                               TextColor="{StaticResource Gray600}"
+                                               LineBreakMode="TailTruncation"
+                                               HorizontalOptions="End"/>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
